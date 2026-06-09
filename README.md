@@ -243,23 +243,31 @@ http://localhost:5000
 
 ## 📸 Screenshots
 
-Add screenshots here:
 
 ### Home Page
 
-[Insert Screenshot]
+![Home Page](screenshots/home_page.png)
 
-### Requirement Analysis Page
+### Requirement Analysis
 
-[Insert Screenshot]
+![Requirement Analysis](screenshots/understanding_page.png)
+
+
+![Requirement Analysis](screenshots/understanding_page2.png)
 
 ### Recommendations Dashboard
 
-[Insert Screenshot]
+![Recommendations Dashboard](screenshots/recommendations_dashboard.png)
 
-### Product Analysis Page
+![Recommendations Dashboard](screenshots/recommendations_dashboard2.png)
 
-[Insert Screenshot]
+### Product Analysis
+
+![Product Analysis](screenshots/product_analysis.png)
+
+### Product Analysis
+
+![Product Analysis](screenshots/product_analysis2.png)
 
 ---
 
