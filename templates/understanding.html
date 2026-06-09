@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - AI Product Suggester</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            background: linear-gradient(135deg, #fce7f3 0%, #f3e8ff 25%, #e0e7ff 50%, #dbeafe 75%, #cffafe 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(232, 213, 255, 0.4) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(209, 250, 229, 0.3) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(254, 228, 226, 0.3) 0%, transparent 50%);
+            animation: gradientShift 20s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2%, -2%) rotate(1deg); }
+            50% { transform: translate(-1%, 3%) rotate(-1deg); }
+            75% { transform: translate(-3%, -1%) rotate(0.5deg); }
+        }
+
+        /* Floating decorative elements */
+        .decoration {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .decoration-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #c084fc, #818cf8);
+            top: -100px;
+            right: -100px;
+            animation: float1 15s ease-in-out infinite;
+        }
+
+        .decoration-2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #34d399, #22d3ee);
+            bottom: -50px;
+            left: -50px;
+            animation: float2 18s ease-in-out infinite;
+        }
+
+        .decoration-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, #fb7185, #f472b6);
+            top: 50%;
+            left: 10%;
+            animation: float3 12s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, 30px) scale(1.05); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.1); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-25px) scale(1.05); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1, #3b82f6);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+        }
+
+        .header-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* Glass card effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 2.5rem;
+            box-shadow: 
+                0 8px 32px rgba(124, 58, 237, 0.08),
+                0 2px 8px rgba(124, 58, 237, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Original Query Section */
+        .query-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #7c3aed;
+            margin-bottom: 0.5rem;
+        }
+
+        .query-text {
+            font-size: 1.125rem;
+            color: #334155;
+            line-height: 1.6;
+            font-style: italic;
+            padding: 1rem 1.25rem;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        /* Analysis Results Grid */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .result-item {
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        .result-item:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.1);
+        }
+
+        .result-item.full-width {
+            grid-column: span 2;
+        }
+
+        .result-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #7c3aed;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-label svg {
+            width: 16px;
+            height: 16px;
+            stroke: #8b5cf6;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .result-value {
+            font-size: 1rem;
+            color: #334155;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .result-value.not-specified {
+            color: #94a3b8;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        /* Tags/Chips for lists */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.85rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
+            color: #6366f1;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .tag:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2));
+            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .tag.empty {
+            background: rgba(148, 163, 184, 0.1);
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.15);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        /* Error Message */
+        .error-message {
+            padding: 1rem 1.25rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            color: #dc2626;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-message svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+
+        /* Continue Button */
+        .button-container {
+            text-align: center;
+            margin-top: 2rem;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .continue-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: inherit;
+            color: white;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1, #4f46e5);
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 16px rgba(99, 102, 241, 0.35),
+                0 1px 3px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 30px rgba(99, 102, 241, 0.45),
+                0 2px 6px rgba(99, 102, 241, 0.3);
+        }
+
+        .continue-btn:hover::before {
+            left: 100%;
+        }
+
+        .continue-btn:active {
+            transform: translateY(0);
+            box-shadow: 
+                0 2px 10px rgba(99, 102, 241, 0.3),
+                0 1px 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .continue-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Back to Home Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 1.5rem;
+            color: #7c3aed;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #6366f1;
+            transform: translateX(-4px);
+        }
+
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 2rem 1rem;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .glass-card {
+                padding: 1.5rem;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .result-item.full-width {
+                grid-column: span 1;
+            }
+
+            .continue-btn {
+                padding: 0.9rem 2.5rem;
+                font-size: 1rem;
+                width: 100%;
+            }
+
+            .decoration {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .glass-card {
+                padding: 1.25rem;
+                border-radius: 16px;
+            }
+
+            .header-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+            }
+
+            .header-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        /* Accessibility: reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative floating elements -->
+    <div class="decoration decoration-1"></div>
+    <div class="decoration decoration-2"></div>
+    <div class="decoration decoration-3"></div>
+
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="header-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                    <rect x="9" y="3" width="6" height="4" rx="1"/>
+                    <path d="M9 14l2 2 4-4"/>
+                </svg>
+            </div>
+            <h1>Requirements Analyzed</h1>
+            <p class="subtitle">Here's what our AI understood from your request</p>
+        </div>
+
+        <!-- Main Content Card -->
+        <div class="glass-card">
+            <!-- Original Query Display -->
+            <div class="query-section">
+                <div class="section-label">Your Original Request</div>
+                <div class="query-text">
+                    "{{ original_query }}"
+                </div>
+            </div>
+
+            <!-- Error Message (if any) -->
+            {% if error %}
+            <div class="error-message">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <!-- Extracted Information Grid -->
+            <div class="results-grid">
+                <!-- Category -->
+                <div class="result-item">
+                    <div class="result-label">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                            <line x1="7" y1="7" x2="7.01" y2="7"/>
+                        </svg>
+                        Category
+                    </div>
+                    <div class="result-value {% if category == 'Not specified' %}not-specified{% endif %}">
+                        {{ category }}
+                    </div>
+                </div>
+
+                <!-- Budget -->
+                <div class="result-item">
+                    <div class="result-label">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="12" y1="1" x2="12" y2="23"/>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        Budget
+                    </div>
+                    <div class="result-value {% if budget == 'Not specified' %}not-specified{% endif %}">
+                        {{ budget }}
+                    </div>
+                </div>
+
+                <!-- Purpose -->
+                <div class="result-item full-width">
+                    <div class="result-label">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        Purpose
+                    </div>
+                    <div class="result-value {% if purpose == 'Not specified' %}not-specified{% endif %}">
+                        {{ purpose }}
+                    </div>
+                </div>
+
+                <!-- Important Features -->
+                <div class="result-item full-width">
+                    <div class="result-label">
+                        <svg viewBox="0 0 24 24">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        Important Features
+                    </div>
+                    <div class="tags-container">
+                        {% if important_features %}
+                            {% for feature in important_features %}
+                                <span class="tag">{{ feature }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="tag empty">No specific features mentioned</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Preferred Brands -->
+                <div class="result-item full-width">
+                    <div class="result-label">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                        Preferred Brands
+                    </div>
+                    <div class="tags-container">
+                        {% if preferred_brands %}
+                            {% for brand in preferred_brands %}
+                                <span class="tag">{{ brand }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="tag empty">No brand preferences mentioned</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-container">
+            <a href="/top_picks" class="continue-btn" aria-label="Continue to product suggestions">
+                <svg viewBox="0 0 24 24">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+                Continue
+            </a>
+            <br>
+            <a href="/" class="back-link">
+                <svg viewBox="0 0 24 24">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Start Over
+            </a>
+        </div>
+    </div>
+</body>
+</html>
