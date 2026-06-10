@@ -4,6 +4,10 @@ An AI-powered product recommendation platform that helps users discover products
 
 ---
 
+## 🔗 Live Demo
+
+      https://ai-poweredpurchaseadvisor.onrender.com
+
 ## 📌 Project Overview
 
 Finding the right product online can be difficult due to the large number of available options, conflicting reviews, and overwhelming specifications.
