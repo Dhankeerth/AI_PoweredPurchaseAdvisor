@@ -6,7 +6,8 @@ An AI-powered product recommendation platform that helps users discover products
 
 ## 🔗 Live Demo
 
-    [Try AI Product Advisor](https://your-ai-product-advisor.onrender.com)
+🚀 **Live Website:**  
+https://your-actual-render-url.onrender.com
 
 ## 📌 Project Overview
 
